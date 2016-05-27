@@ -10,7 +10,7 @@ ruta_performance="/etc/X11/xorg.conf.performance"
 
 if [ -f "$ruta_ahorro" ]
 then
-	#echo "Quieres activar el modo rendimiento[XORG] (s/n) TODO!!!!"
+	#echo "Quieres activar el modo ahorro[XORG] (s/n) TODO!!!!"
 	mv /etc/X11/xorg.conf /etc/X11/xorg.conf.performance
 	mv /etc/X11/xorg.conf.ahorro /etc/X11/xorg.conf
 	echo "Activada configuracon de ahorro:
