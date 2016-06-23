@@ -1,5 +1,16 @@
 #!/bin/bash
 
+#Yes/No Dialog - Implementar en ifs
+read -p "Are you sure? " -n 1 -r choice
+echo    # (optional) move to a new line
+if [[ $choice =~ ^[Yy]$ ]]
+then
+    echo "yes!"
+else
+    echo "no!"    
+fi
+exit 0
+
 #Todo: Pedir respuesta de confirmacion del usuario
 #ToDo: Preguntar al usuario si quiere reiniciar el gestor de ventanas ("restart lightdm" en el caso de XFCE)
 #Fix: Para no depender de la existencia de diferentes arcivos de configuracion, debería guardarse la configuracion en este escript y simplemente añadirla o quitarla del archivo xorg.conf
