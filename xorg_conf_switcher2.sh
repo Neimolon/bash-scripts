@@ -1,14 +1,14 @@
 #!/bin/bash
-#NOTA Sin testear en real!! teño que marchar.
-
 #NOTA Esto esta bien así porque quiero tener el contenido completo de la configuracion de xorg.conf para ambos modos de trabajo guardados en algun sitio, en este 
-#   caso, en las variables xorg_XXXXmode_conf.
+#caso, en las variables xorg_XXXXmode_conf.
 
 #TODO Si tal para proximas veriones en vez de guardar toda la configuracion de ambos modos en variables, podemos hacer que simplemente se comente/descomente
-#   la linea (Option         "RegistryDwords" "PowerMizerEnable=0x1; PerfLevelSrc=0x2222; PowerMizerLevel=0x3; PowerMizerDefault=0x3; PowerMizerDefaultAC=0x3")
-#   que bloquea powermizer en la configuracion para intercambiar el modo de trabajo.
+#la linea (Option         "RegistryDwords" "PowerMizerEnable=0x1; PerfLevelSrc=0x2222; PowerMizerLevel=0x3; PowerMizerDefault=0x3; PowerMizerDefaultAC=0x3")
+#que bloquea powermizer en la configuracion para intercambiar el modo de trabajo.
 
-ruta_xorg_conf="/home/diego/Documentos/BashWorkSpace/desarrollos/xorg.conf";
+#TODO ¿Porqué es necesario reiniciar lightdm para pasar a modo ahorro pero todo el sistema para modo performance, ¿algo mal en config de performance??
+
+ruta_xorg_conf="/etc/X11/xorg.conf";
 
 xorg_perfmode_conf='
 	#Performance Mode Custom Config
@@ -166,10 +166,6 @@ xorg_savemode_conf='
 	    EndSubSection
 	EndSection';
 
-
-#Todo: Pedir respuesta de confirmacion del usuario
-#ToDo: Preguntar al usuario si quiere reiniciar el gestor de ventanas ("restart lightdm" en el caso de XFCE)
-
 if grep -q "Performance Mode" $ruta_xorg_conf
 then
     echo "Se ha detectado el modo Rendimiento activo";
@@ -178,12 +174,27 @@ then
 	if [[ $choice =~ ^[Ss]$ ]]
 	then
 	    > $ruta_xorg_conf;
-	    echo $xorg_savemode_conf > $ruta_xorg_conf;
+	    echo "$xorg_savemode_conf" > $ruta_xorg_conf;
 	    echo "Se ha activado el modo ahorro"; 
 	else
 	    echo "Bye!";
         exit 0;    
 	fi
+	
+	echo    # (optional) move to a new line
+	echo "¿Queres reiniciar el gestor de ventanas para que la configuración tenga efecto?. Si despues del reiniciar el gestor de ventanas la configuracion de Powermizer
+	sigue sin funcionar, será necesario reiniciar el sistema para que tenga efecto. GUARDA TUS TRABAJOS Y CIERRA LAS VENTANAS ANTES DE HACER ESTO (s/N)";
+	
+	read -p "¿Reiniciar gestor de ventanas lightdm?(s/N)" -n 1 -r choice
+	echo    # (optional) move to a new line
+	if [[ $choice =~ ^[Ss]$ ]]
+	then
+		sudo restart lightdm; 
+	else
+	    echo "Bye!";
+	    exit 0;    
+	fi
+	
 elif grep -q "Save Mode" $ruta_xorg_conf
 then
     echo "Se ha detectado el modo ahorro activo";
@@ -192,16 +203,30 @@ then
 	if [[ $choice =~ ^[Ss]$ ]]
 	then
 	    > $ruta_xorg_conf;
-	    echo $xorg_perfmode_conf > $ruta_xorg_conf;
+	    echo "$xorg_perfmode_conf" > $ruta_xorg_conf;
 	    echo "Se ha activado el modo rendimiento"; 
 	else
 	    echo "Bye!";
         exit 0;    
 	fi	
+	
+	echo    # (optional) move to a new line
+	echo "¿Quieres reiniciar el sistema para que la configuración tenga efecto?. GUARDA TUS TRABAJOS Y CIERRA LAS VENTANAS ANTES DE HACER ESTO(s/N)";
+	
+	read -p "¿Reiniciar sistema?(s/N)" -n 1 -r choice
+	echo    # (optional) move to a new line
+	if [[ $choice =~ ^[Ss]$ ]]
+	then
+		sudo reboot now; 
+	else
+	    echo "Bye!";
+	    exit 0;    
+	fi
+	
 else
-	echo "No se ha podido detectar el modo de trabajo de la Tarjeta de video, comprueba que la configuracion de video en $ruta_xorg_conf";	
+	echo "No se ha podido detectar el modo de trabajo de la Tarjeta de video, comprueba que la configuracion de video en $ruta_xorg_conf";
+	exit 0;	
 fi
 
-#Yes/No Dialog - Implementar en ifs
 
 exit 0
