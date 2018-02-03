@@ -1,2 +1,3 @@
-whois.sh/checked
+checked/
 whois.sh/words/*
+DominiosLibres.txt
